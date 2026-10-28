@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>HidroCanal | Energía específica y curvas de remanso</title>
+<style>
+:root{
+  --bg:#ffffff;--card:#ffffff;--ink:#172536;--muted:#617286;
+  --line:#d7e0e8;--blue:#1677d2;--blue-dark:#124a83;
+  --water:#37a9ef;--green:#15966a;--orange:#e58a20;--red:#cf4d4d;
+  color-scheme:light;box-sizing:border-box
+}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 "Segoe UI",Arial,sans-serif}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#041e49,#0b4a9e 60%,#13a4d6);color:#fff;padding:26px 18px 66px;text-align:center}
+.hero h1{margin:0;font-size:clamp(30px,4vw,40px);letter-spacing:.5px;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.35)}
+.hero h1 b{color:#7fe3ff}
+.hero p{margin:7px auto 0;max-width:800px;font-size:14px;color:#dff3ff;opacity:.95}
+.wv{position:absolute;left:0;bottom:0;width:200%;height:52px;animation:wave 14s linear infinite}.wv.b{animation-duration:9s;opacity:.55;bottom:-4px}@keyframes wave{to{transform:translateX(-50%)}}
+main{max-width:1200px;margin:-22px auto 20px;padding:0 14px 32px;position:relative}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{flex:1;min-width:230px;padding:12px;font-weight:700;font-size:14px}
+button{font:inherit;border:1px solid #cbd7e2;border-radius:9px;padding:9px 14px;background:#fff;color:var(--ink);cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+button:hover{border-color:var(--blue);box-shadow:0 3px 12px #1677d21c}
+button.on{background:#126bc0;color:#fff;border-color:#126bc0;box-shadow:none}
+section{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;margin:14px 0;box-shadow:0 3px 14px #18324b0a}
+h2{font-size:18px;color:#164f85;background:transparent;margin:0 0 14px;padding:0;border-radius:0}
+h3{font-size:15px;margin:12px 0 8px;color:#245c8d}
+.seg{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.seg button{border-radius:8px}
+.seg button.on{background:#126bc0;color:#fff;border-color:#126bc0}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch}
+.row>div,.row>fieldset{min-width:0}
+.fs{flex:1;border:1px solid var(--line);border-radius:10px;margin:0;padding:14px;background:#fff;min-width:280px}
+.fs legend{color:#245c8d;font-weight:700;padding:0 7px}
+.cg{display:grid;grid-template-columns:minmax(115px,1fr) minmax(80px,120px) 48px;gap:9px 8px;align-items:center;margin-bottom:10px}
+.cg span{font-size:13px;color:var(--muted)}
+.cg i{font-style:normal;color:var(--muted);font-size:12px}
+input,select{font:inherit;padding:9px;border:1px solid #cbd7e2;border-radius:7px;text-align:center;min-width:0;width:100%;background:#fff;color:#172536}
+input[type=checkbox]{width:auto;accent-color:var(--blue)}
+input:focus,select:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px #1677d21c}
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:6px 0 4px}
+.fg label{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:600;color:#3d5a78}
+.fg input,.fg select{text-align:left;font-weight:600;padding:11px 12px;border-radius:9px}
+.card{border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0;background:#fff}
+.card h3{margin:0 0 12px;font-size:18px;color:#164f85}.fs legend{font-size:16px}
+#toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:#fff;border:2px solid #1fa463;border-radius:40px;padding:10px 24px 10px 12px;display:flex;align-items:center;gap:10px;font-weight:700;color:#0d5c37;box-shadow:0 10px 30px rgba(0,0,0,.22);z-index:50;animation:pop .35s}
+#toast .ck{width:30px;height:30px;border-radius:50%;background:#1fa463;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}@keyframes pop{from{opacity:0;transform:translate(-50%,-20px)}}
+.lg{display:flex;flex-wrap:wrap;gap:6px 22px;margin:10px 0;font-size:13px;font-weight:600}.lg span{display:flex;align-items:center;gap:7px}.lg i{display:inline-block;width:34px;height:0}
+.kv div{background:#fbfdff;border:1px solid var(--line);border-radius:9px;padding:11px 12px;font-size:12px;color:var(--muted)}
+.kv b{display:block;font-size:18px;color:#145b9a;margin-top:3px;overflow-wrap:anywhere}
+#sv{display:block;width:100%;max-width:100%;height:auto;min-height:230px;background:#fff;border:1px solid var(--line);border-radius:9px}
+canvas{display:block;width:100%;height:360px;border:1px solid var(--line);border-radius:9px;touch-action:pan-y;background:#fff}
+.tw{overflow:auto;max-height:360px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}
+th,td{padding:7px 9px;border-bottom:1px solid #e6ebf0;text-align:right}
+th{position:sticky;top:0;background:#eaf4fc;color:#164f85;z-index:1}
+td:first-child,th:first-child{text-align:center}
+.at td{text-align:left;white-space:normal;line-height:1.4}
+.at th{text-align:left}.at tr.hl td{background:#dcecfb;color:#0e4d8f;font-weight:700}.at tr.hl td:first-child{box-shadow:inset 4px 0 0 #1677d2}
+.mu{color:var(--muted);font-size:13px;margin:7px 0}
+.er{color:#b83232}.wr{color:#9a6200}.in{color:var(--muted)}
+#e1{font-size:13px;margin:8px 0}
+#kmsg{margin:12px 0}
+#kmsg div{margin:6px 0;padding:9px 12px;border:1px solid var(--line);border-left:4px solid currentColor;border-radius:8px;font-size:13px;background:#fff}
+#go2{background:#126bc0;color:#fff;border:1px solid #126bc0;padding:14px 26px;font-size:16px;font-weight:700;border-radius:10px}
+#go2:hover{background:#0e5da9}
+[hidden]{display:none!important}
+@media(max-width:650px){
+  main{padding:0 10px 24px;margin:14px auto}
+  .hero{padding:22px 12px}
+  section{padding:12px}
+  h2{font-size:16px}
+  .fs{padding:11px;min-width:0;width:100%}
+  .cg{grid-template-columns:minmax(100px,1fr) minmax(70px,100px) 38px;gap:8px 6px}
+  canvas{height:300px}
+  .tabs button{min-width:100%;font-size:13px}
+  .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style></head><body>
+<div class="hero"><h1>Hidro<b>Canal</b></h1><p>Altura uniforme · altura crítica · energía específica · curvas de remanso</p>
+<svg class="wv b" viewBox="0 0 2000 60" preserveAspectRatio="none" fill="#13a4d6"><path d="M0 30Q100 0 200 30T400 30T600 30T800 30T1000 30T1200 30T1400 30T1600 30T1800 30T2000 30V60H0Z"/></svg><svg class="wv" viewBox="0 0 2000 60" preserveAspectRatio="none" fill="#fff"><path d="M0 30Q100 0 200 30T400 30T600 30T800 30T1000 30T1200 30T1400 30T1600 30T1800 30T2000 30V60H0Z"/></svg></div>
+<main><div class="tabs" id="tabs"><button class="on" data-t="m1">Módulo 1 · Tirantes y energía específica</button><button data-t="m2">Módulo 2 · Curvas de remanso y perfiles</button></div>
+
+<section id="m1"><div class="seg" id="gs"><button data-g="rect" class="on">▭ Rectangular</button><button data-g="trap">⏢ Trapezoidal</button><button data-g="tri">▽ Triangular</button><button data-g="circ">◯ Circular</button></div>
+<div class="row"><div style="flex:1;min-width:280px"><div class="card"><h3>1. Datos del canal</h3><div class="fg" id="gd"></div><div class="fg" style="margin-top:14px"><label>Caudal Q · m³/s<input id="mQ" value="400"></label><label>Pendiente S · m/m<input id="mS" value="0.001"></label><label>Rugosidad n<input id="mn" value="0.014"></label><label>Coef. energía α<input id="ma" value="1"></label><label>Gravedad g · m/s²<input id="mg" value="9.81"></label></div></div>
+<div id="e1" class="er"></div></div>
+<div style="flex:1;min-width:300px"><svg id="sv" viewBox="0 0 460 260"></svg><div class="mu">Azul: lámina a hu · verde discontinua: hu · roja discontinua: hc · naranja: y explorado con el cursor en la curva.</div></div></div>
+<div class="card"><h3>2. Resultados</h3><div id="r1" class="kv"></div></div><div class="card"><h3>3. Curva de energía específica · y (vertical) vs E (horizontal)</h3><canvas id="ce"></canvas><div class="mu" id="et">Mueve el cursor (o el dedo) sobre la curva para explorar y, E, el tirante alterno y el régimen.</div></div></section>
+
+<section id="m2" hidden><div class="card"><h3>1. Datos para la curva de remanso</h3><div class="fg">
+<label>Caudal Q (m³/s)<input id="kQ" value="400"></label><label>Ancho de solera b (m)<input id="kb" value="20"></label><label>Talud Z (H:V) · 0 = rectangular<input id="kz" value="0"></label><label>Pendiente S₀ (m/m)<input id="kS" value="0.001"></label><label>Rugosidad de Manning n<input id="kn" value="0.014"></label><label>Coef. de energía α<input id="ka" value="1"></label><label>Tirante inicial y₁ (m)<input id="k1" value="1"></label><label>Tirante final y₂ (m)<input id="k2" value="3.442"></label><label>Número de tramos nt<input id="kt" value="10"></label><label>Compuerta en x = 0<select id="kg"><option value="1">Dibujar compuerta</option><option value="0">No dibujar</option></select></label></div>
+<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:16px"><button id="go2">Calcular curva y clasificar perfil</button><span class="mu">Método del paso directo: Δs = Δh·D/N, evaluado en el tirante medio h+Δh/2.</span></div></div>
+<div class="row"><fieldset class="fs" style="flex:1;min-width:300px"><legend>2. Resultados finales</legend><div class="tw"><table id="kf"></table></div></fieldset></div>
+<div id="kmsg"></div><canvas id="kc"></canvas><div class="lg"><span><i style="border-top:4px solid #8a5a2b"></i>Solera</span><span style="color:#1c9a5c"><i style="border-top:3px dashed #1c9a5c"></i>hu · altura uniforme</span><span style="color:#d33a1f"><i style="border-top:3px dashed #d33a1f"></i>hc · altura crítica</span><span style="color:#1f6fe0"><i style="border-top:4px solid #1f6fe0"></i>Lámina de agua</span><span><i style="border-left:6px solid #172536;height:14px;width:0"></i>Compuerta</span></div><div class="mu" id="ktp">Δs = Δh·D/N en h+Δh/2, Δh = (y2−y1)/nt. Δs &lt; 0: el cálculo avanza hacia aguas arriba.</div>
+<fieldset class="fs"><legend>3. Resultados parciales</legend><div class="tw"><table id="kp"></table></div></fieldset>
+<fieldset class="fs"><legend>4. Tipos de perfil (el que se forma está resaltado)</legend><div class="tw" style="max-height:none"><table class="at"><tr><th>Perfil</th><th>Zona</th><th>Comportamiento y control</th></tr>
+<tr id="a_M1"><td>M1</td><td>y &gt; yn &gt; yc</td><td>Remanso subcrítico; y crece hacia aguas abajo. Control aguas abajo (presa, lago).</td></tr>
+<tr id="a_M2"><td>M2</td><td>yn &gt; y &gt; yc</td><td>Abatimiento; y baja hacia yc aguas abajo (caída, aumento de pendiente).</td></tr>
+<tr id="a_M3"><td>M3</td><td>y &lt; yc &lt; yn</td><td>Supercrítico; sube hacia yc y termina en resalto. Control aguas arriba (compuerta).</td></tr>
+<tr id="a_S1"><td>S1</td><td>y &gt; yc &gt; yn</td><td>Remanso que sube aguas abajo y empieza con resalto. Control aguas abajo.</td></tr>
+<tr id="a_S2"><td>S2</td><td>yc &gt; y &gt; yn</td><td>Supercrítico; baja hacia yn. Control aguas arriba (cambio de pendiente suave→fuerte).</td></tr>
+<tr id="a_S3"><td>S3</td><td>y &lt; yn &lt; yc</td><td>Supercrítico; sube hacia yn. Control aguas arriba (compuerta).</td></tr>
+<tr id="a_C"><td>C1, C3</td><td>yn ≈ yc</td><td>Pendiente crítica: perfiles casi horizontales, inestables.</td></tr>
+<tr id="a_H"><td>H2, H3</td><td>sin yn (S = 0)</td><td>Pendiente horizontal; solo existen y &gt; yc (H2) o y &lt; yc (H3).</td></tr>
+<tr id="a_A"><td>A2, A3</td><td>sin yn (S &lt; 0)</td><td>Pendiente adversa; análogos a H2 y H3.</td></tr></table></div></fieldset></section></main><div id="toast" hidden></div>
+<script>
+const $=id=>document.getElementById(id),F=id=>{const e=$(id);return e?parseFloat(String(e.value).replace(',','.')):NaN},fx=(v,d=3)=>isFinite(v)?v.toFixed(d):'—';
+function bis(f,a,b,t=1e-10){let fa=f(a),fb=f(b);if(!(fa*fb<=0))return null;for(let i=0;i<200;i++){const m=(a+b)/2,fm=f(m);if(fm*fa<=0){b=m;fb=fm}else{a=m;fa=fm}if(b-a<t)break}return(a+b)/2}
+function tk(a,b,n){const s0=(b-a)/n,p=10**Math.floor(Math.log10(s0)),f=s0/p,st=(f<1.5?1:f<3?2:f<7?5:10)*p,t=[];for(let v=Math.ceil(a/st)*st;v<=b;v+=st)t.push(+v.toPrecision(10));return{t,d:Math.max(0,-Math.floor(Math.log10(st)))}}
+function mk(g,b,z,D){const s=Math.sqrt(1+z*z);
+ if(g=='rect')return{A:y=>b*y,P:y=>b+2*y,T:y=>b,ymax:1e3};if(g=='trap')return{A:y=>b*y+z*y*y,P:y=>b+2*y*s,T:y=>b+2*z*y,ymax:1e3};if(g=='tri')return{A:y=>z*y*y,P:y=>2*y*s,T:y=>2*z*y,ymax:1e3};
+ const th=y=>2*Math.acos(Math.max(-1,Math.min(1,1-2*y/D)));return{A:y=>D*D/8*(th(y)-Math.sin(th(y))),P:y=>D*th(y)/2,T:y=>D*Math.sin(th(y)/2),ymax:.99*D}}
+/* ---------- MÓDULO 1 ---------- */
+let g1='rect',M=null,ye=null;
+const GD={rect:[['Ancho de solera (b)','b1',20,'m']],trap:[['Ancho de solera (b)','b1',20,'m'],['Talud Z (H:1V)','z1',2,'']],tri:[['Talud Z (H:1V)','z1',1.5,'']],circ:[['Diámetro (D)','D1',2,'m']]};
+const DEF={rect:[400,.001,.014],trap:[400,.001,.025],tri:[10,.002,.02],circ:[1.2,.003,.013]};
+function gd(){$('gd').innerHTML=GD[g1].map(r=>`<label>${r[0]}${r[3]?' · '+r[3]:''}<input id="${r[1]}" value="${r[2]}"></label>`).join('')}
+function m1(){const Q=F('mQ'),S=F('mS'),n=F('mn'),al=F('ma'),gg=F('mg'),E=[];
+ GD[g1].forEach(r=>{if(!(F(r[1])>0))E.push(r[0]+' debe ser > 0')});if(!(Q>0))E.push('Q debe ser > 0');if(!(n>0))E.push('n debe ser > 0');if(!(al>=1))E.push('α ≥ 1');if(!(gg>0))E.push('g > 0');
+ if(E.length){M=null;$('e1').innerHTML=E.join('<br>');return}
+ const s=mk(g1,F('b1'),F('z1'),F('D1')),A=s.A,P=s.P,T=s.T,circ=g1=='circ',D=F('D1');
+ const Eg=y=>y+al*Q*Q/(2*gg*A(y)**2),fc=y=>al*Q*Q*T(y)/(gg*A(y)**3)-1;let hi=circ?.9999*D:1,k=0;if(!circ)while(fc(hi)>0&&k++<60)hi*=2;const yc=bis(fc,1e-6,hi);
+ if(yc==null){M=null;$('e1').textContent='No existe tirante crítico para estos datos.';return}
+ let yn=null,msg='';if(S>0){const fn=y=>A(y)*Math.pow(A(y)/P(y),2/3)*Math.sqrt(S)/n-Q;if(circ){hi=.938*D;yn=fn(hi)>=0?bis(fn,1e-6,hi):null;if(yn==null)msg='Q excede la capacidad máxima de la tubería parcialmente llena: no hay hu.'}else{hi=1;k=0;while(fn(hi)<0&&k++<60)hi*=2;yn=bis(fn,1e-6,hi)}}else msg='S ≤ 0: no existe altura uniforme.';
+ $('e1').textContent=msg;M={s,yn,yc,Eg,Q,al,gg};
+ const Ac=A(yc),Sc=Q*Q*n*n/(Ac*Ac*Math.pow(Ac/P(yc),4/3)),cls=yn==null?'—':Math.abs(yn-yc)<=.01*yc?'Crítica (C)':yn>yc?'Suave (M)':'Fuerte (S)',V=yn?Q/A(yn):NaN,Fr=yn?Math.sqrt(al*Q*Q*T(yn)/(gg*A(yn)**3)):NaN;
+ $('r1').innerHTML=[['hu (altura uniforme)',fx(yn,4)+' m'],['hc (altura crítica)',fx(yc,4)+' m'],['E mínima',fx(Eg(yc),4)+' m'],['E en hu',yn?fx(Eg(yn),4)+' m':'—'],['V en hu',yn?fx(V,3)+' m/s':'—'],['Fr en hu',fx(Fr,3)],['Pendiente',cls],['S crítica',fx(Sc,5)+' m/m']].map((r,i)=>`<div style="border-top:3px solid ${['#1c9a5c','#d33a1f','#0b57c4','#0b57c4','#8a5a2b','#8a5a2b','#7a5bb5','#7a5bb5'][i]}">${r[0]}<b>${r[1]}</b></div>`).join('');
+ dsec();pe()}
+function dsec(){if(!M)return;const{s,yn,yc}=M,circ=g1=='circ',D=F('D1');let H=circ?D:1.4*Math.max(yn||0,yc,ye||0);const N=48;let W=0;for(let i=0;i<=N;i++)W=Math.max(W,s.T(H*i/N));
+ const k=Math.min(240/W,190/H),cx=230,by=232,path=Y=>{const p=[];for(let i=N;i>=0;i--)p.push([-s.T(Y*i/N)/2,Y*i/N]);for(let i=0;i<=N;i++)p.push([s.T(Y*i/N)/2,Y*i/N]);return p.map((q,i)=>(i?'L':'M')+(cx+q[0]*k).toFixed(1)+' '+(by-q[1]*k).toFixed(1)).join('')+'Z'};
+ const ln=(y,c,t,left)=>{const yy=by-y*k,hw=s.T(y)/2*k+14;return`<line x1="${cx-hw}" x2="${cx+hw}" y1="${yy}" y2="${yy}" stroke="${c}" stroke-width="2" stroke-dasharray="7 4"/><text x="${left?cx-hw-4:cx+hw+4}" y="${yy+4}" font-size="12" font-weight="700" fill="${c}" text-anchor="${left?'end':'start'}">${t}</text>`};
+ $('sv').innerHTML=(yn?`<path d="${path(yn)}" fill="#1f6fe0" fill-opacity=".45"/>`:'')+`<path d="${path(H)}" fill="none" stroke="#8a5a2b" stroke-width="4"/>`+(yn?ln(yn,'#1c9a5c','hu = '+fx(yn,3)+' m'):'')+ln(yc,'#d33a1f','hc = '+fx(yc,3)+' m',1)+(ye?ln(ye,'#f08a00','y = '+fx(ye,3)+' m',0):'')}
+function pe(){if(!M)return;const{s,yn,yc,Eg}=M,c=$('ce'),x=c.getContext('2d'),dp=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*dp;c.height=h*dp;x.setTransform(dp,0,0,dp,0,0);
+ const yr=Math.min(s.ymax,1.7*Math.max(yn||0,yc)),Ex=Math.max(Eg(yn||yc),Eg(yc))*2.1,m={l:48,r:12,t:12,b:30},pw=w-m.l-m.r,ph=h-m.t-m.b,PX=e=>m.l+e/Ex*pw,PY=y=>m.t+ph-y/yr*ph;M.map={yr,m,ph};
+ x.font='11px system-ui';x.fillStyle='#14202b';x.strokeStyle='#e1e8f0';x.lineWidth=1;const ta=tk(0,Ex,7),tb=tk(0,yr,6);
+ ta.t.forEach(t=>{x.beginPath();x.moveTo(PX(t),m.t);x.lineTo(PX(t),m.t+ph);x.stroke();x.fillText(t.toFixed(ta.d),PX(t)-10,h-14)});tb.t.forEach(t=>{x.beginPath();x.moveTo(m.l,PY(t));x.lineTo(m.l+pw,PY(t));x.stroke();x.fillText(t.toFixed(tb.d),4,PY(t)+4)});
+ x.fillText('E (m)',m.l+pw-34,h-2);x.fillText('y (m)',2,10);x.save();x.beginPath();x.rect(m.l,m.t,pw,ph);x.clip();
+ x.strokeStyle='#8a99a8';x.setLineDash([4,4]);x.beginPath();x.moveTo(PX(0),PY(0));x.lineTo(PX(yr),PY(yr));x.stroke();x.setLineDash([]);
+ x.strokeStyle='#0b57c4';x.lineWidth=3;x.beginPath();let f=1;for(let i=1;i<=800;i++){const y=yr*i/800;f?x.moveTo(PX(Eg(y)),PY(y)):x.lineTo(PX(Eg(y)),PY(y));f=0}x.stroke();
+ const hl=(y,c,t)=>{x.strokeStyle=c;x.setLineDash([6,4]);x.lineWidth=1.5;x.beginPath();x.moveTo(m.l,PY(y));x.lineTo(PX(Eg(y)),PY(y));x.lineTo(PX(Eg(y)),m.t+ph);x.stroke();x.setLineDash([]);x.fillStyle=c;x.beginPath();x.arc(PX(Eg(y)),PY(y),5,0,7);x.fill();x.fillText(t,PX(Eg(y))+8,PY(y)-6)};
+ hl(yc,'#d33a1f','hc · Emín');if(yn){hl(yn,'#1c9a5c','hu');const e0=Eg(yn);let hi=Math.min(s.ymax,yc*2),lo=1e-5,ya=null;if(yn>yc)ya=bis(y=>Eg(y)-e0,lo,yc);else{let k=0;while(Eg(hi)<e0&&hi<s.ymax&&k++<40)hi=Math.min(hi*2,s.ymax);ya=bis(y=>Eg(y)-e0,yc,hi)}
+  if(ya&&ya<yr){x.strokeStyle='#1c9a5c';x.beginPath();x.arc(PX(e0),PY(ya),5,0,7);x.stroke();x.fillStyle='#1c9a5c';x.fillText('alterno '+fx(ya,3),PX(e0)+8,PY(ya)+4)}}
+ if(ye&&ye<yr){x.fillStyle='#f08a00';x.beginPath();x.arc(PX(Eg(ye)),PY(ye),6,0,7);x.fill()}
+ x.restore();x.fillStyle='#14202b';x.fillText('Subcrítico (y > hc) ↑ · Supercrítico (y < hc) ↓',m.l+pw-200,m.t+14)}
+$('ce').onpointermove=e=>{if(!M||!M.map)return;const{yr,m,ph}=M.map,rc=$('ce').getBoundingClientRect(),y=Math.max(yr*.01,Math.min(yr,(m.t+ph-(e.clientY-rc.top))/ph*yr));ye=y;
+ const{s,yc,Eg,Q,al,gg}=M,Fr=Math.sqrt(al*Q*Q*s.T(y)/(gg*s.A(y)**3));$('et').textContent=`y = ${fx(y,3)} m · E = ${fx(Eg(y),3)} m · V = ${fx(Q/s.A(y),3)} m/s · Fr = ${fx(Fr,3)} → ${Fr>1.01?'supercrítico (torrencial)':Fr<.99?'subcrítico (fluvial)':'crítico'}`;dsec();pe()};
+$('ce').onpointerleave=()=>{ye=null;dsec();pe()};
+$('gs').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('gs').children].forEach(c=>c.classList.toggle('on',c==b));g1=b.dataset.g;gd();const d=DEF[g1];$('mQ').value=d[0];$('mS').value=d[1];$('mn').value=d[2];m1()};
+$('m1').oninput=m1;
+/* ---------- MÓDULO 2 ---------- */
+let kr=null;
+function kcalc(t){const Qv=F('kQ'),b=F('kb'),Z=F('kz'),S=F('kS'),n=F('kn'),a=F('ka'),y1=F('k1'),y2=F('k2'),nt=Math.round(F('kt')),gg=9.81,E=[],W=[];
+ if(!(Qv>0))E.push('Q debe ser > 0');if(!(b>=0))E.push('b ≥ 0');if(!(Z>=0))E.push('Z ≥ 0');if(!(b>0||Z>0))E.push('b o Z deben ser > 0');if(!(n>0))E.push('n > 0');if(!isFinite(S))E.push('S inválida');if(!(a>=1))E.push('α ≥ 1');if(!(y1>0&&y2>0))E.push('y1 e y2 > 0');if(y1==y2)E.push('y1 ≠ y2');if(!(nt>=1&&nt<=2000))E.push('nt entre 1 y 2000');
+ if(E.length){$('kmsg').innerHTML=E.map(x=>`<div class=er>✖ ${x}</div>`).join('');return}
+ const A=h=>b*h+Z*h*h,P=h=>b+2*h*Math.sqrt(1+Z*Z),T=h=>b+2*Z*h,hyd=h=>{const Aa=A(h),R=Aa/P(h),V=Qv/Aa;return{V,Fr:Math.sqrt(a*Qv*Qv*T(h)/(gg*Aa**3)),Sf:Math.pow(n*V/Math.pow(R,2/3),2),E:h+a*V*V/(2*gg)}};
+ const ND=h=>[S-hyd(h).Sf,1-a*Qv*Qv*T(h)/(gg*A(h)**3)];let hi=1,k=0;const fc=h=>a*Qv*Qv*T(h)/(gg*A(h)**3)-1;while(fc(hi)>0&&k++<60)hi*=2;const yc=bis(fc,1e-6,hi);
+ let yn=NaN;if(S>0){const fn=h=>A(h)*Math.pow(A(h)/P(h),2/3)*Math.sqrt(S)/n-Qv;hi=1;k=0;while(fn(hi)<0&&k++<60)hi*=2;yn=bis(fn,1e-6,hi)}
+ const dh=(y2-y1)/nt,PP=[],FF=[{x:0,y:y1}];let h=y1,x=0;
+ for(let i=0;i<nt;i++){const hm=h+dh/2,[N,D]=ND(hm),ds=dh*D/N;if(!isFinite(ds)){W.push(`Tramo ${i+1}: N≈0 (cerca de yn), Δs indeterminado.`);break}PP.push({h,hm,N,D,ds,x:x+ds});x+=ds;h+=dh;FF.push({x,y:h})}
+ if((y1-yc)*(y2-yc)<0&&Math.abs(y2-yc)>.002*yc)W.push(`El intervalo [y1, y2] contiene yc = ${fx(yc)} m: singularidad / resalto. Resultado no válido.`);
+ if(isFinite(yn)&&(y1-yn)*(y2-yn)<=0)W.push(`El intervalo contiene yn = ${fx(yn)} m: el perfil solo tiende asintóticamente a yn.`);
+ if(PP.some(p=>Math.sign(p.ds)!=Math.sign(PP[0].ds)))W.push('Δs cambia de signo: el intervalo cruza un tirante singular.');
+ const ym=(y1+y2)/2,lab=!isFinite(yn)?(S<0?'A':'H')+(ym>yc?'2':'3'):Math.abs(yn-yc)<=.01*yc?'C'+(ym>yc?'1':'3'):yn>yc?(ym>yn?'M1':ym>yc?'M2':'M3'):(ym>yc?'S1':ym>yn?'S2':'S3');
+ document.querySelectorAll('.at tr').forEach(r=>r.classList.remove('hl'));const row=$('a_'+(lab[0]=='M'||lab[0]=='S'?lab:lab[0]));if(row)row.classList.add('hl');
+ $('kmsg').innerHTML=W.map(m=>`<div class=wr>⚠ ${m}</div>`).join('')+`<div class=in>ℹ Perfil <b>${lab}</b> · yn = ${fx(yn,4)} m · yc = ${fx(yc,4)} m · Δh = ${fx(dh,5)} m · distancia total = ${fx(x,3)} m · ${isFinite(yn)?(yn>yc?'pendiente suave':'pendiente fuerte'):'pendiente nula o adversa'}</div>`;
+ kr={F:FF,S,yn,yc,y2,lab};const th=l=>'<tr>'+l.map(t=>`<th>${t}</th>`).join('')+'</tr>';
+ $('kf').innerHTML=th(['x (m)','y (m)','Cota lámina','V (m/s)','Fr','E (m)'])+FF.map(p=>{const q=hyd(p.y);return`<tr><td>${fx(p.x,3)}</td><td>${fx(p.y,4)}</td><td>${fx(p.y-S*p.x,3)}</td><td>${fx(q.V,3)}</td><td>${fx(q.Fr,3)}</td><td>${fx(q.E,3)}</td></tr>`}).join('');
+ $('kp').innerHTML=th(['h (m)','h + Δh/2','N(h+Δh/2)','D(h+Δh/2)','Δs (m)','x (m)'])+PP.map(p=>`<tr><td>${fx(p.h,4)}</td><td>${fx(p.hm,4)}</td><td>${p.N.toFixed(5)}</td><td>${p.D.toFixed(4)}</td><td>${fx(p.ds,3)}</td><td>${fx(p.x,3)}</td></tr>`).join('');kplot();if(t)toast(W.length)}
+function kplot(){const r=kr;if(!r||$('m2').hidden)return;const c=$('kc'),x=c.getContext('2d'),dp=devicePixelRatio||1,w=c.clientWidth,H=c.clientHeight;c.width=w*dp;c.height=H*dp;x.setTransform(dp,0,0,dp,0,0);
+ const xs=r.F.map(p=>p.x),x0=Math.min(0,...xs),x1=Math.max(0,...xs),pd=(x1-x0)*.07||1,X0=x0-pd,X1=x1+pd,zf=s=>-r.S*s,gate=$('kg').value=='1',top=Math.max(r.y2,r.F[0].y,r.yn||0,r.yc)*1.2;
+ const es=[zf(X0),zf(X1),zf(0)+(gate?top:0),...r.F.map(p=>zf(p.x)+p.y),zf(X0)+r.yc,zf(X1)+r.yc];if(isFinite(r.yn))es.push(zf(X0)+r.yn,zf(X1)+r.yn);
+ const lo=Math.min(...es),hi=Math.max(...es),pe_=(hi-lo)*.1||1,e0=lo-pe_,e1=hi+pe_,m={l:50,r:10,t:10,b:26},pw=w-m.l-m.r,ph=H-m.t-m.b,PX=s=>m.l+(s-X0)/(X1-X0)*pw,PY=e=>m.t+ph-(e-e0)/(e1-e0)*ph;
+ x.font='11px system-ui';x.fillStyle='#14202b';x.strokeStyle='#e1e8f0';const ta=tk(X0,X1,7),tb=tk(e0,e1,5);
+ ta.t.forEach(t=>{x.beginPath();x.moveTo(PX(t),m.t);x.lineTo(PX(t),m.t+ph);x.stroke();x.fillText(t.toFixed(ta.d),PX(t)-12,H-9)});tb.t.forEach(t=>{x.beginPath();x.moveTo(m.l,PY(t));x.lineTo(m.l+pw,PY(t));x.stroke();x.fillText(t.toFixed(tb.d),2,PY(t)+4)});
+ const ln=(pts,col,wd,d)=>{x.beginPath();x.strokeStyle=col;x.lineWidth=wd;x.setLineDash(d||[]);pts.forEach((p,i)=>i?x.lineTo(PX(p[0]),PY(p[1])):x.moveTo(PX(p[0]),PY(p[1])));x.stroke();x.setLineDash([])};
+ if(gate){x.fillStyle='#14202b';x.fillRect(PX(0)-3,PY(zf(0)+top),6,PY(zf(0)+r.F[0].y)-PY(zf(0)+top));x.fillText('Compuerta',PX(0)+8,PY(zf(0)+top)+10)}
+ ln([[X0,zf(X0)],[X1,zf(X1)]],'#8a5a2b',4);if(isFinite(r.yn))ln([[X0,zf(X0)+r.yn],[X1,zf(X1)+r.yn]],'#1c9a5c',1.6,[7,4]);ln([[X0,zf(X0)+r.yc],[X1,zf(X1)+r.yc]],'#d33a1f',1.6,[4,4]);
+ ln(r.F.map(p=>[p.x,zf(p.x)+p.y]),'#1f6fe0',2.5);x.fillStyle='#1f6fe0';r.F.forEach(p=>x.fillRect(PX(p.x)-3,PY(zf(p.x)+p.y)-3,6,6));
+ x.font='bold 12px system-ui';const tl=(t,c,yv)=>{x.fillStyle=c;x.fillText(t,PX(X1)-4-x.measureText(t).width,PY(yv)-5)};if(isFinite(r.yn))tl('hu = '+fx(r.yn,3)+' m','#1c9a5c',zf(X1)+r.yn);tl('hc = '+fx(r.yc,3)+' m','#d33a1f',zf(X1)+r.yc);x.fillStyle='#172536';x.fillText('Perfil '+r.lab,m.l+8,m.t+14);$('kc').dataset.g=JSON.stringify([X0,X1,m.l,pw])}
+$('kc').onpointermove=e=>{if(!kr)return;const[X0,X1,l,pw]=JSON.parse($('kc').dataset.g),rc=$('kc').getBoundingClientRect(),wx=X0+(e.clientX-rc.left-l)/pw*(X1-X0);let b=kr.F[0];kr.F.forEach(p=>{if(Math.abs(p.x-wx)<Math.abs(b.x-wx))b=p});$('ktp').textContent=`x = ${fx(b.x,2)} m · y = ${fx(b.y,4)} m · cota lámina = ${fx(b.y-kr.S*b.x,3)} m`};
+let tt;function toast(w){const e=$('toast');e.innerHTML='<span class="ck">✓</span><span>Cálculos realizados exitosamente'+(w?' · revise las advertencias':'')+'</span>';e.hidden=false;e.style.animation='none';void e.offsetWidth;e.style.animation='';clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,3200)}$('go2').onclick=()=>kcalc(1);$('kg').onchange=kplot;
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('tabs').children].forEach(c=>c.classList.toggle('on',c==b));$('m1').hidden=b.dataset.t!='m1';$('m2').hidden=b.dataset.t!='m2';m1();kplot()};
+addEventListener('resize',()=>{pe();kplot()});gd();m1();kcalc();
+</script></body></html>
