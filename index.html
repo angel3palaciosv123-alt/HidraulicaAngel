@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>HidroCanal | Energía específica y curvas de remanso</title>
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>HidroCanales | Energía específica y curvas de remanso</title>
 <style>
 :root{
   --bg:#ffffff;--card:#ffffff;--ink:#172536;--muted:#617286;
@@ -75,18 +75,18 @@ td:first-child,th:first-child{text-align:center}
   .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style></head><body>
-<div class="hero"><h1>Hidro<b>Canal</b></h1><p>Altura uniforme · altura crítica · energía específica · curvas de remanso</p>
+<div class="hero"><h1>Hidro<b>Canal</b></h1><p>Calculo de Altura uniforme, Altura crítica, Energía específica, Curvas de remanso o Perfiles de lamina de agua</p>
 <svg class="wv b" viewBox="0 0 2000 60" preserveAspectRatio="none" fill="#13a4d6"><path d="M0 30Q100 0 200 30T400 30T600 30T800 30T1000 30T1200 30T1400 30T1600 30T1800 30T2000 30V60H0Z"/></svg><svg class="wv" viewBox="0 0 2000 60" preserveAspectRatio="none" fill="#fff"><path d="M0 30Q100 0 200 30T400 30T600 30T800 30T1000 30T1200 30T1400 30T1600 30T1800 30T2000 30V60H0Z"/></svg></div>
 <main><div class="tabs" id="tabs"><button class="on" data-t="m1">Módulo 1 · Tirantes y energía específica</button><button data-t="m2">Módulo 2 · Curvas de remanso y perfiles</button></div>
 
 <section id="m1"><div class="seg" id="gs"><button data-g="rect" class="on">▭ Rectangular</button><button data-g="trap">⏢ Trapezoidal</button><button data-g="tri">▽ Triangular</button><button data-g="circ">◯ Circular</button></div>
-<div class="row"><div style="flex:1;min-width:280px"><div class="card"><h3>1. Datos del canal</h3><div class="fg" id="gd"></div><div class="fg" style="margin-top:14px"><label>Caudal Q · m³/s<input id="mQ" value="400"></label><label>Pendiente S · m/m<input id="mS" value="0.001"></label><label>Rugosidad n<input id="mn" value="0.014"></label><label>Coef. energía α<input id="ma" value="1"></label><label>Gravedad g · m/s²<input id="mg" value="9.81"></label></div></div>
+<div class="row"><div style="flex:1;min-width:280px"><div class="card"><h3>1. Datos del canal</h3><div class="fg" id="gd"></div><div class="fg" style="margin-top:14px"><label>Caudal Q · m³/s<input id="mQ" value=""></label><label>Pendiente S · m/m<input id="mS" value=""></label><label>Rugosidad n<input id="mn" value=""></label><label>Coef. energía α<input id="ma" value="1"></label><label>Gravedad g · m/s²<input id="mg" value="9.81"></label></div></div>
 <div id="e1" class="er"></div></div>
-<div style="flex:1;min-width:300px"><svg id="sv" viewBox="0 0 460 260"></svg><div class="mu">Azul: lámina a hu · verde discontinua: hu · roja discontinua: hc · naranja: y explorado con el cursor en la curva.</div></div></div>
+<div style="flex:1;min-width:300px"><svg id="sv" viewBox="0 0 460 260"></svg><div class="mu">Verde: Altura Uniforme (hu) · Roja: Altura Critica (hc).</div></div></div>
 <div class="card"><h3>2. Resultados</h3><div id="r1" class="kv"></div></div><div class="card"><h3>3. Curva de energía específica · y (vertical) vs E (horizontal)</h3><canvas id="ce"></canvas><div class="mu" id="et">Mueve el cursor (o el dedo) sobre la curva para explorar y, E, el tirante alterno y el régimen.</div></div></section>
 
 <section id="m2" hidden><div class="card"><h3>1. Datos para la curva de remanso</h3><div class="fg">
-<label>Caudal Q (m³/s)<input id="kQ" value="400"></label><label>Ancho de solera b (m)<input id="kb" value="20"></label><label>Talud Z (H:V) · 0 = rectangular<input id="kz" value="0"></label><label>Pendiente S₀ (m/m)<input id="kS" value="0.001"></label><label>Rugosidad de Manning n<input id="kn" value="0.014"></label><label>Coef. de energía α<input id="ka" value="1"></label><label>Tirante inicial y₁ (m)<input id="k1" value="1"></label><label>Tirante final y₂ (m)<input id="k2" value="3.442"></label><label>Número de tramos nt<input id="kt" value="10"></label><label>Compuerta en x = 0<select id="kg"><option value="1">Dibujar compuerta</option><option value="0">No dibujar</option></select></label></div>
+<label>Caudal Q (m³/s)<input id="kQ" value=""></label><label>Ancho de solera b (m)<input id="kb" value=""></label><label>Talud Z (H:V) · 0 = rectangular<input id="kz" value=""></label><label>Pendiente S₀ (m/m)<input id="kS" value=""></label><label>Rugosidad de Manning n<input id="kn" value=""></label><label>Coef. de energía α<input id="ka" value="1"></label><label>Tirante inicial y₁ (m)<input id="k1" value=""></label><label>Tirante final y₂ (m)<input id="k2" value=""></label><label>Número de tramos nt<input id="kt" value=""></label><label>Compuerta en x = 0<select id="kg"><option value="1">Dibujar compuerta</option><option value="0">No dibujar</option></select></label></div>
 <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:16px"><button id="go2">Calcular curva y clasificar perfil</button><span class="mu">Método del paso directo: Δs = Δh·D/N, evaluado en el tirante medio h+Δh/2.</span></div></div>
 <div class="row"><fieldset class="fs" style="flex:1;min-width:300px"><legend>2. Resultados finales</legend><div class="tw"><table id="kf"></table></div></fieldset></div>
 <div id="kmsg"></div><canvas id="kc"></canvas><div class="lg"><span><i style="border-top:4px solid #8a5a2b"></i>Solera</span><span style="color:#1c9a5c"><i style="border-top:3px dashed #1c9a5c"></i>hu · altura uniforme</span><span style="color:#d33a1f"><i style="border-top:3px dashed #d33a1f"></i>hc · altura crítica</span><span style="color:#1f6fe0"><i style="border-top:4px solid #1f6fe0"></i>Lámina de agua</span><span><i style="border-left:6px solid #172536;height:14px;width:0"></i>Compuerta</span></div><div class="mu" id="ktp">Δs = Δh·D/N en h+Δh/2, Δh = (y2−y1)/nt. Δs &lt; 0: el cálculo avanza hacia aguas arriba.</div>
@@ -110,8 +110,8 @@ function mk(g,b,z,D){const s=Math.sqrt(1+z*z);
  const th=y=>2*Math.acos(Math.max(-1,Math.min(1,1-2*y/D)));return{A:y=>D*D/8*(th(y)-Math.sin(th(y))),P:y=>D*th(y)/2,T:y=>D*Math.sin(th(y)/2),ymax:.99*D}}
 /* ---------- MÓDULO 1 ---------- */
 let g1='rect',M=null,ye=null;
-const GD={rect:[['Ancho de solera (b)','b1',20,'m']],trap:[['Ancho de solera (b)','b1',20,'m'],['Talud Z (H:1V)','z1',2,'']],tri:[['Talud Z (H:1V)','z1',1.5,'']],circ:[['Diámetro (D)','D1',2,'m']]};
-const DEF={rect:[400,.001,.014],trap:[400,.001,.025],tri:[10,.002,.02],circ:[1.2,.003,.013]};
+const GD={rect:[['Ancho de solera (b)','b1',"",'m']],trap:[['Ancho de solera (b)','b1',"",'m'],['Talud Z (H:1V)','z1',"",'']],tri:[['Talud Z (H:1V)','z1',"",'']],circ:[['Diámetro (D)','D1',"",'m']]};
+const DEF={rect:["","",""],trap:["","",""],tri:["","",""],circ:["","",""]};
 function gd(){$('gd').innerHTML=GD[g1].map(r=>`<label>${r[0]}${r[3]?' · '+r[3]:''}<input id="${r[1]}" value="${r[2]}"></label>`).join('')}
 function m1(){const Q=F('mQ'),S=F('mS'),n=F('mn'),al=F('ma'),gg=F('mg'),E=[];
  GD[g1].forEach(r=>{if(!(F(r[1])>0))E.push(r[0]+' debe ser > 0')});if(!(Q>0))E.push('Q debe ser > 0');if(!(n>0))E.push('n debe ser > 0');if(!(al>=1))E.push('α ≥ 1');if(!(gg>0))E.push('g > 0');
