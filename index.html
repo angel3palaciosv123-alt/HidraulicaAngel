@@ -58,10 +58,10 @@ td:first-child,th:first-child{text-align:center}
 .mu{color:var(--muted);font-size:13px;margin:7px 0}
 .er{color:#b83232}.wr{color:#9a6200}.in{color:var(--muted)}
 #e1{font-size:13px;margin:8px 0}
-#kmsg{margin:12px 0}
-#kmsg div{margin:6px 0;padding:9px 12px;border:1px solid var(--line);border-left:4px solid currentColor;border-radius:8px;font-size:13px;background:#fff}
-#go2{background:#126bc0;color:#fff;border:1px solid #126bc0;padding:14px 26px;font-size:16px;font-weight:700;border-radius:10px}
-#go2:hover{background:#0e5da9}
+.kmsg{margin:12px 0}
+.kmsg div{margin:6px 0;padding:9px 12px;border:1px solid var(--line);border-left:4px solid currentColor;border-radius:8px;font-size:13px;background:#fff}
+.go{background:#126bc0;color:#fff;border:1px solid #126bc0;padding:14px 26px;font-size:16px;font-weight:700;border-radius:10px}
+.go:hover{background:#0e5da9}
 [hidden]{display:none!important}
 @media(max-width:650px){
   main{padding:0 10px 24px;margin:14px auto}
@@ -77,7 +77,7 @@ td:first-child,th:first-child{text-align:center}
 </style></head><body>
 <div class="hero"><h1>Hidro<b>Canales</b></h1><p>Calculo de Altura uniforme, Altura crítica, Energía específica, Curvas de remanso o Perfiles de lamina de agua</p>
 <svg class="wv b" viewBox="0 0 2000 60" preserveAspectRatio="none" fill="#13a4d6"><path d="M0 30Q100 0 200 30T400 30T600 30T800 30T1000 30T1200 30T1400 30T1600 30T1800 30T2000 30V60H0Z"/></svg><svg class="wv" viewBox="0 0 2000 60" preserveAspectRatio="none" fill="#fff"><path d="M0 30Q100 0 200 30T400 30T600 30T800 30T1000 30T1200 30T1400 30T1600 30T1800 30T2000 30V60H0Z"/></svg></div>
-<main><div class="tabs" id="tabs"><button class="on" data-t="m1">Módulo 1 · Tirantes y energía específica</button><button data-t="m2">Módulo 2 · Curvas de remanso y perfiles</button></div>
+<main><div class="tabs" id="tabs"><button class="on" data-t="m1">Módulo 1 · Tirantes y energía específica</button><button data-t="m2">Módulo 2 · Curvas de remanso mediante Δh</button><button data-t="m3">Módulo 3 · Curvas de remanso mediante Δs</button></div>
 
 <section id="m1"><div class="seg" id="gs"><button data-g="rect" class="on">▭ Rectangular</button><button data-g="trap">⏢ Trapezoidal</button><button data-g="tri">▽ Triangular</button><button data-g="circ">◯ Circular</button></div>
 <div class="row"><div style="flex:1;min-width:280px"><div class="card"><h3>1. Datos del canal</h3><div class="fg" id="gd"></div><div class="fg" style="margin-top:14px"><label>Caudal Q · m³/s<input id="mQ" value=""></label><label>Pendiente S · m/m<input id="mS" value=""></label><label>Rugosidad n<input id="mn" value=""></label><label>Coef. energía α<input id="ma" value="1"></label><label>Gravedad g · m/s²<input id="mg" value="9.81"></label></div></div>
@@ -85,22 +85,9 @@ td:first-child,th:first-child{text-align:center}
 <div style="flex:1;min-width:300px"><svg id="sv" viewBox="0 0 460 260"></svg><div class="mu">Verde: Altura Uniforme (hu) · Roja: Altura Critica (hc).</div></div></div>
 <div class="card"><h3>2. Resultados</h3><div id="r1" class="kv"></div></div><div class="card"><h3>3. Curva de energía específica · y (vertical) vs E (horizontal)</h3><canvas id="ce"></canvas><div class="mu" id="et">Mueve el cursor (o el dedo) sobre la curva para explorar y, E, el tirante alterno y el régimen.</div></div></section>
 
-<section id="m2" hidden><div class="card"><h3>1. Datos para la curva de remanso</h3><div class="fg">
-<label>Caudal Q (m³/s)<input id="kQ" value=""></label><label>Ancho de solera b (m)<input id="kb" value=""></label><label>Talud Z (H:V) · 0 = rectangular<input id="kz" value=""></label><label>Pendiente S₀ (m/m)<input id="kS" value=""></label><label>Rugosidad de Manning n<input id="kn" value=""></label><label>Coef. de energía α<input id="ka" value="1"></label><label>Tirante inicial y₁ (m)<input id="k1" value=""></label><label>Tirante final y₂ (m)<input id="k2" value=""></label><label>Número de tramos nt<input id="kt" value=""></label><label>Compuerta en x = 0<select id="kg"><option value="1">Dibujar compuerta</option><option value="0">No dibujar</option></select></label></div>
-<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:16px"><button id="go2">Calcular curva y clasificar perfil</button><span class="mu">Método del paso directo: Δs = Δh·D/N, evaluado en el tirante medio h+Δh/2.</span></div></div>
-<div class="row"><fieldset class="fs" style="flex:1;min-width:300px"><legend>2. Resultados finales</legend><div class="tw"><table id="kf"></table></div></fieldset></div>
-<div id="kmsg"></div><canvas id="kc"></canvas><div class="lg"><span><i style="border-top:4px solid #8a5a2b"></i>Solera</span><span style="color:#1c9a5c"><i style="border-top:3px dashed #1c9a5c"></i>hu · altura uniforme</span><span style="color:#d33a1f"><i style="border-top:3px dashed #d33a1f"></i>hc · altura crítica</span><span style="color:#1f6fe0"><i style="border-top:4px solid #1f6fe0"></i>Lámina de agua</span><span><i style="border-left:6px solid #172536;height:14px;width:0"></i>Compuerta</span></div><div class="mu" id="ktp">Δs = Δh·D/N en h+Δh/2, Δh = (y2−y1)/nt. Δs &lt; 0: el cálculo avanza hacia aguas arriba.</div>
-<fieldset class="fs"><legend>3. Resultados parciales</legend><div class="tw"><table id="kp"></table></div></fieldset>
-<fieldset class="fs"><legend>4. Tipos de perfil.</legend><div class="tw" style="max-height:none"><table class="at"><tr><th>Perfil</th><th>Zona</th><th>Comportamiento y control</th></tr>
-<tr id="a_M1"><td>M1</td><td>y &gt; yn &gt; yc</td><td>Remanso subcrítico; y crece hacia aguas abajo. Control aguas abajo (presa, lago).</td></tr>
-<tr id="a_M2"><td>M2</td><td>yn &gt; y &gt; yc</td><td>Abatimiento; y baja hacia yc aguas abajo (caída, aumento de pendiente).</td></tr>
-<tr id="a_M3"><td>M3</td><td>y &lt; yc &lt; yn</td><td>Supercrítico; sube hacia yc y termina en resalto. Control aguas arriba (compuerta).</td></tr>
-<tr id="a_S1"><td>S1</td><td>y &gt; yc &gt; yn</td><td>Remanso que sube aguas abajo y empieza con resalto. Control aguas abajo.</td></tr>
-<tr id="a_S2"><td>S2</td><td>yc &gt; y &gt; yn</td><td>Supercrítico; baja hacia yn. Control aguas arriba (cambio de pendiente suave→fuerte).</td></tr>
-<tr id="a_S3"><td>S3</td><td>y &lt; yn &lt; yc</td><td>Supercrítico; sube hacia yn. Control aguas arriba (compuerta).</td></tr>
-<tr id="a_C"><td>C1, C3</td><td>yn ≈ yc</td><td>Pendiente crítica: perfiles casi horizontales, inestables.</td></tr>
-<tr id="a_H"><td>H2, H3</td><td>sin yn (S = 0)</td><td>Pendiente horizontal; solo existen y &gt; yc (H2) o y &lt; yc (H3).</td></tr>
-<tr id="a_A"><td>A2, A3</td><td>sin yn (S &lt; 0)</td><td>Pendiente adversa; análogos a H2 y H3.</td></tr></table></div></fieldset></section></main><div id="toast" hidden></div>
+<section id="m2" hidden></section>
+<section id="m3" hidden></section>
+</main><div id="toast" hidden></div>
 <script>
 const $=id=>document.getElementById(id),F=id=>{const e=$(id);return e?parseFloat(String(e.value).replace(',','.')):NaN},fx=(v,d=3)=>isFinite(v)?v.toFixed(d):'—';
 function bis(f,a,b,t=1e-10){let fa=f(a),fb=f(b);if(!(fa*fb<=0))return null;for(let i=0;i<200;i++){const m=(a+b)/2,fm=f(m);if(fm*fa<=0){b=m;fb=fm}else{a=m;fa=fm}if(b-a<t)break}return(a+b)/2}
@@ -145,38 +132,114 @@ $('ce').onpointermove=e=>{if(!M||!M.map)return;const{yr,m,ph}=M.map,rc=$('ce').g
 $('ce').onpointerleave=()=>{ye=null;dsec();pe()};
 $('gs').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('gs').children].forEach(c=>c.classList.toggle('on',c==b));g1=b.dataset.g;gd();const d=DEF[g1];$('mQ').value=d[0];$('mS').value=d[1];$('mn').value=d[2];m1()};
 $('m1').oninput=m1;
-/* ---------- MÓDULO 2 ---------- */
-let kr=null;
-function kcalc(t){const Qv=F('kQ'),b=F('kb'),Z=F('kz'),S=F('kS'),n=F('kn'),a=F('ka'),y1=F('k1'),y2=F('k2'),nt=Math.round(F('kt')),gg=9.81,E=[],W=[];
- if(!(Qv>0))E.push('Q debe ser > 0');if(!(b>=0))E.push('b ≥ 0');if(!(Z>=0))E.push('Z ≥ 0');if(!(b>0||Z>0))E.push('b o Z deben ser > 0');if(!(n>0))E.push('n > 0');if(!isFinite(S))E.push('S inválida');if(!(a>=1))E.push('α ≥ 1');if(!(y1>0&&y2>0))E.push('y1 e y2 > 0');if(y1==y2)E.push('y1 ≠ y2');if(!(nt>=1&&nt<=2000))E.push('nt entre 1 y 2000');
- if(E.length){$('kmsg').innerHTML=E.map(x=>`<div class=er>✖ ${x}</div>`).join('');return}
- const A=h=>b*h+Z*h*h,P=h=>b+2*h*Math.sqrt(1+Z*Z),T=h=>b+2*Z*h,hyd=h=>{const Aa=A(h),R=Aa/P(h),V=Qv/Aa;return{V,Fr:Math.sqrt(a*Qv*Qv*T(h)/(gg*Aa**3)),Sf:Math.pow(n*V/Math.pow(R,2/3),2),E:h+a*V*V/(2*gg)}};
- const ND=h=>[S-hyd(h).Sf,1-a*Qv*Qv*T(h)/(gg*A(h)**3)];let hi=1,k=0;const fc=h=>a*Qv*Qv*T(h)/(gg*A(h)**3)-1;while(fc(hi)>0&&k++<60)hi*=2;const yc=bis(fc,1e-6,hi);
- let yn=NaN;if(S>0){const fn=h=>A(h)*Math.pow(A(h)/P(h),2/3)*Math.sqrt(S)/n-Qv;hi=1;k=0;while(fn(hi)<0&&k++<60)hi*=2;yn=bis(fn,1e-6,hi)}
- const dh=(y2-y1)/nt,PP=[],FF=[{x:0,y:y1}];let h=y1,x=0;
- for(let i=0;i<nt;i++){const hm=h+dh/2,[N,D]=ND(hm),ds=dh*D/N;if(!isFinite(ds)){W.push(`Tramo ${i+1}: N≈0 (cerca de yn), Δs indeterminado.`);break}PP.push({h,hm,N,D,ds,x:x+ds});x+=ds;h+=dh;FF.push({x,y:h})}
- if((y1-yc)*(y2-yc)<0&&Math.abs(y2-yc)>.002*yc)W.push(`El intervalo [y1, y2] contiene yc = ${fx(yc)} m: singularidad / resalto. Resultado no válido.`);
- if(isFinite(yn)&&(y1-yn)*(y2-yn)<=0)W.push(`El intervalo contiene yn = ${fx(yn)} m: el perfil solo tiende asintóticamente a yn.`);
- if(PP.some(p=>Math.sign(p.ds)!=Math.sign(PP[0].ds)))W.push('Δs cambia de signo: el intervalo cruza un tirante singular.');
- const ym=(y1+y2)/2,lab=!isFinite(yn)?(S<0?'A':'H')+(ym>yc?'2':'3'):Math.abs(yn-yc)<=.01*yc?'C'+(ym>yc?'1':'3'):yn>yc?(ym>yn?'M1':ym>yc?'M2':'M3'):(ym>yc?'S1':ym>yn?'S2':'S3');
- document.querySelectorAll('.at tr').forEach(r=>r.classList.remove('hl'));const row=$('a_'+(lab[0]=='M'||lab[0]=='S'?lab:lab[0]));if(row)row.classList.add('hl');
- $('kmsg').innerHTML=W.map(m=>`<div class=wr>⚠ ${m}</div>`).join('')+`<div class=in>          Perfil <b>${lab}</b> ----- yn = ${fx(yn,4)} m --- yc = ${fx(yc,4)} m --- Δh = ${fx(dh,5)} m --- Distancia total = ${fx(x,3)} m --- ${isFinite(yn)?(yn>yc?'Pendiente suave':'Pendiente fuerte'):'Pendiente nula o adversa'}</div>`;
- kr={F:FF,S,yn,yc,y2,lab};const th=l=>'<tr>'+l.map(t=>`<th>${t}</th>`).join('')+'</tr>';
- $('kf').innerHTML=th(['x (m)','y (m)','Cota lámina','V (m/s)','Fr','E (m)'])+FF.map(p=>{const q=hyd(p.y);return`<tr><td>${fx(p.x,3)}</td><td>${fx(p.y,4)}</td><td>${fx(p.y-S*p.x,3)}</td><td>${fx(q.V,3)}</td><td>${fx(q.Fr,3)}</td><td>${fx(q.E,3)}</td></tr>`}).join('');
- $('kp').innerHTML=th(['h (m)','h + Δh/2','N(h+Δh/2)','D(h+Δh/2)','Δs (m)','x (m)'])+PP.map(p=>`<tr><td>${fx(p.h,4)}</td><td>${fx(p.hm,4)}</td><td>${p.N.toFixed(5)}</td><td>${p.D.toFixed(4)}</td><td>${fx(p.ds,3)}</td><td>${fx(p.x,3)}</td></tr>`).join('');kplot();if(t)toast(W.length)}
-function kplot(){const r=kr;if(!r||$('m2').hidden)return;const c=$('kc'),x=c.getContext('2d'),dp=devicePixelRatio||1,w=c.clientWidth,H=c.clientHeight;c.width=w*dp;c.height=H*dp;x.setTransform(dp,0,0,dp,0,0);
- const xs=r.F.map(p=>p.x),x0=Math.min(0,...xs),x1=Math.max(0,...xs),pd=(x1-x0)*.07||1,X0=x0-pd,X1=x1+pd,zf=s=>-r.S*s,gate=$('kg').value=='1',top=Math.max(r.y2,r.F[0].y,r.yn||0,r.yc)*1.2;
- const es=[zf(X0),zf(X1),zf(0)+(gate?top:0),...r.F.map(p=>zf(p.x)+p.y),zf(X0)+r.yc,zf(X1)+r.yc];if(isFinite(r.yn))es.push(zf(X0)+r.yn,zf(X1)+r.yn);
- const lo=Math.min(...es),hi=Math.max(...es),pe_=(hi-lo)*.1||1,e0=lo-pe_,e1=hi+pe_,m={l:50,r:10,t:10,b:26},pw=w-m.l-m.r,ph=H-m.t-m.b,PX=s=>m.l+(s-X0)/(X1-X0)*pw,PY=e=>m.t+ph-(e-e0)/(e1-e0)*ph;
- x.font='11px system-ui';x.fillStyle='#14202b';x.strokeStyle='#e1e8f0';const ta=tk(X0,X1,7),tb=tk(e0,e1,5);
- ta.t.forEach(t=>{x.beginPath();x.moveTo(PX(t),m.t);x.lineTo(PX(t),m.t+ph);x.stroke();x.fillText(t.toFixed(ta.d),PX(t)-12,H-9)});tb.t.forEach(t=>{x.beginPath();x.moveTo(m.l,PY(t));x.lineTo(m.l+pw,PY(t));x.stroke();x.fillText(t.toFixed(tb.d),2,PY(t)+4)});
- const ln=(pts,col,wd,d)=>{x.beginPath();x.strokeStyle=col;x.lineWidth=wd;x.setLineDash(d||[]);pts.forEach((p,i)=>i?x.lineTo(PX(p[0]),PY(p[1])):x.moveTo(PX(p[0]),PY(p[1])));x.stroke();x.setLineDash([])};
- if(gate){x.fillStyle='#14202b';x.fillRect(PX(0)-3,PY(zf(0)+top),6,PY(zf(0)+r.F[0].y)-PY(zf(0)+top));x.fillText('Compuerta',PX(0)+8,PY(zf(0)+top)+10)}
- ln([[X0,zf(X0)],[X1,zf(X1)]],'#8a5a2b',4);if(isFinite(r.yn))ln([[X0,zf(X0)+r.yn],[X1,zf(X1)+r.yn]],'#1c9a5c',1.6,[7,4]);ln([[X0,zf(X0)+r.yc],[X1,zf(X1)+r.yc]],'#d33a1f',1.6,[4,4]);
- ln(r.F.map(p=>[p.x,zf(p.x)+p.y]),'#1f6fe0',2.5);x.fillStyle='#1f6fe0';r.F.forEach(p=>x.fillRect(PX(p.x)-3,PY(zf(p.x)+p.y)-3,6,6));
- x.font='bold 12px system-ui';const tl=(t,c,yv)=>{x.fillStyle=c;x.fillText(t,PX(X1)-4-x.measureText(t).width,PY(yv)-5)};if(isFinite(r.yn))tl('hu = '+fx(r.yn,3)+' m','#1c9a5c',zf(X1)+r.yn);tl('hc = '+fx(r.yc,3)+' m','#d33a1f',zf(X1)+r.yc);x.fillStyle='#172536';x.fillText('Perfil '+r.lab,m.l+8,m.t+14);$('kc').dataset.g=JSON.stringify([X0,X1,m.l,pw])}
-$('kc').onpointermove=e=>{if(!kr)return;const[X0,X1,l,pw]=JSON.parse($('kc').dataset.g),rc=$('kc').getBoundingClientRect(),wx=X0+(e.clientX-rc.left-l)/pw*(X1-X0);let b=kr.F[0];kr.F.forEach(p=>{if(Math.abs(p.x-wx)<Math.abs(b.x-wx))b=p});$('ktp').textContent=`x = ${fx(b.x,2)} m · y = ${fx(b.y,4)} m · cota lámina = ${fx(b.y-kr.S*b.x,3)} m`};
-let tt;function toast(w){const e=$('toast');e.innerHTML='<span class="ck">✓</span><span>Cálculos realizados exitosamente'+(w?' · revise las advertencias':'')+'</span>';e.hidden=false;e.style.animation='none';void e.offsetWidth;e.style.animation='';clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,3200)}$('go2').onclick=()=>kcalc(1);$('kg').onchange=kplot;
-$('tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('tabs').children].forEach(c=>c.classList.toggle('on',c==b));$('m1').hidden=b.dataset.t!='m1';$('m2').hidden=b.dataset.t!='m2';m1();kplot()};
-addEventListener('resize',()=>{pe();kplot()});gd();m1();kcalc();
+
+/* ---------- MÓDULOS 2 (Δh) y 3 (Δs): misma interfaz, distinto método ---------- */
+const R={};
+const TT=[['M1','M1','y &gt; yn &gt; yc','Remanso subcrítico; y crece hacia aguas abajo. Control aguas abajo (presa, lago).'],
+['M2','M2','yn &gt; y &gt; yc','Abatimiento; y baja hacia yc aguas abajo (caída, aumento de pendiente).'],
+['M3','M3','y &lt; yc &lt; yn','Supercrítico; sube hacia yc y termina en resalto. Control aguas arriba (compuerta).'],
+['S1','S1','y &gt; yc &gt; yn','Remanso que sube aguas abajo y empieza con resalto. Control aguas abajo.'],
+['S2','S2','yc &gt; y &gt; yn','Supercrítico; baja hacia yn. Control aguas arriba (cambio de pendiente suave→fuerte).'],
+['S3','S3','y &lt; yn &lt; yc','Supercrítico; sube hacia yn. Control aguas arriba (compuerta).'],
+['C','C1, C3','yn ≈ yc','Pendiente crítica: perfiles casi horizontales, inestables.'],
+['H','H2, H3','sin yn (S = 0)','Pendiente horizontal; solo existen y &gt; yc (H2) o y &lt; yc (H3).'],
+['A','A2, A3','sin yn (S &lt; 0)','Pendiente adversa; análogos a H2 y H3.']];
+const typeTable=P=>`<table class="at"><tr><th>Perfil</th><th>Zona</th><th>Comportamiento y control</th></tr>`+TT.map(r=>`<tr id="${P}_a_${r[0]}"><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')+`</table>`;
+function panel(P,h){
+ const last=h?`<label>Tirante final y₂ (m)<input id="${P}2" value=""></label><label>Número de tramos nt<input id="${P}t" value=""></label>`
+  :`<label>Paso de longitud Δs (m) · negativo = hacia aguas arriba<input id="${P}2" value=""></label><label>Número de pasos nt<input id="${P}t" value=""></label>`;
+ return `<h2>${h?'Curvas de remanso mediante Δh (paso de profundidad)':'Curvas de remanso mediante Δs (paso de longitud)'}</h2>
+<div class="card"><h3>1. Datos para la curva de remanso</h3><div class="fg">
+<label>Caudal Q (m³/s)<input id="${P}Q" value=""></label><label>Ancho de solera b (m)<input id="${P}b" value=""></label><label>Talud Z (H:V) · 0 = rectangular<input id="${P}z" value=""></label><label>Pendiente S₀ (m/m)<input id="${P}S" value=""></label><label>Rugosidad de Manning n<input id="${P}n" value=""></label><label>Coef. de energía α<input id="${P}a" value="1"></label><label>Tirante inicial y₁ (m)<input id="${P}1" value=""></label>${last}
+<label>Estructura de control<select id="${P}g"><option value="g">Dibujar compuerta</option><option value="d">Dibujar presa / desembocadura</option><option value="0">No dibujar</option></select></label>
+<label>Abscisa del punto cero (m)<input id="${P}x" value="0"></label>
+<label>Punto cero (x = 0)<select id="${P}d"><option value="L">A la izquierda (aguas arriba)</option><option value="R">A la derecha (aguas abajo / desembocadura)</option></select></label></div>
+<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:16px"><button class="go" id="${P}go">Calcular curva y clasificar perfil</button><span class="mu">${h?'Método del paso directo: Δs = Δh·D/N, evaluado en el tirante medio h+Δh/2.':'Δh = Δs·N/D evaluado en h+Δh/2, iterando en cada paso hasta converger. Δs &lt; 0 avanza hacia aguas arriba.'}</span></div>
+<div class="mu">La compuerta se dibuja en el extremo aguas arriba del tramo calculado (su abertura es el tirante en ese punto, normalmente y₁); la presa o desembocadura, en el extremo aguas abajo (su nivel es el tirante en ese punto, normalmente y₂).</div></div>
+<div class="row"><fieldset class="fs" style="flex:1;min-width:300px"><legend>2. Resultados finales</legend><div class="tw"><table id="${P}f"></table></div></fieldset></div>
+<div class="kmsg" id="${P}msg"></div><div class="kv" id="${P}card" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:10px 0"></div><canvas id="${P}c"></canvas><div class="lg"><span><i style="border-top:4px solid #8a5a2b"></i>Solera</span><span style="color:#1c9a5c"><i style="border-top:3px dashed #1c9a5c"></i>hu · altura uniforme</span><span style="color:#d33a1f"><i style="border-top:3px dashed #d33a1f"></i>hc · altura crítica</span><span style="color:#1f6fe0"><i style="border-top:4px solid #1f6fe0"></i>Lámina de agua</span><span><i style="border-left:6px solid #172536;height:14px;width:0"></i>Compuerta</span><span style="color:#1f6fe0"><i style="border-top:10px solid #1f6fe040"></i>Presa / desembocadura</span></div><div class="mu" id="${P}tp">${h?'Δs = Δh·D/N en h+Δh/2, Δh = (y2−y1)/nt.':'Δh = Δs·N/D en h+Δh/2 (iterativo).'} Δs &lt; 0: el cálculo avanza hacia aguas arriba.</div>
+<fieldset class="fs"><legend>3. Resultados parciales</legend><div class="tw"><table id="${P}p"></table></div><div class="kv" id="${P}sum" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:12px"></div></fieldset>
+<fieldset class="fs"><legend>4. Tipos de perfil.</legend><div class="tw" style="max-height:none">${typeTable(P)}</div></fieldset>`}
+$('m2').innerHTML=panel('k',true);$('m3').innerHTML=panel('p',false);
+
+function calc(P,t){
+ const h=P=='k',sec=h?'m2':'m3',g=id=>F(P+id),Qv=g('Q'),b=g('b'),Z=g('z'),S=g('S'),n=g('n'),a=g('a'),y1=g('1'),v2=g('2'),nt=Math.round(g('t')),gg=9.81,sel=$(P+'d').value,dr=1,dsv=v2,x1=isFinite(g('x'))?g('x'):0,E=[],W=[],msg=P+'msg';
+ if(!(Qv>0))E.push('Q debe ser > 0');if(!(b>=0))E.push('b ≥ 0');if(!(Z>=0))E.push('Z ≥ 0');if(!(b>0||Z>0))E.push('b o Z deben ser > 0');if(!(n>0))E.push('n > 0');if(!isFinite(S))E.push('S inválida');if(!(a>=1))E.push('α ≥ 1');if(!(y1>0))E.push('y1 > 0');
+ if(h){if(!(v2>0))E.push('y2 > 0');if(y1==v2)E.push('y1 ≠ y2')}else if(!isFinite(v2)||v2==0)E.push('Δs debe ser un número distinto de 0');
+ if(!(nt>=1&&nt<=2000))E.push('nt entre 1 y 2000');
+ if(E.length){$(P+'card').innerHTML=$(P+'sum').innerHTML='';$(msg).innerHTML=E.map(x=>`<div class=er>✖ ${x}</div>`).join('');return}
+ const A=u=>b*u+Z*u*u,Pm=u=>b+2*u*Math.sqrt(1+Z*Z),T=u=>b+2*Z*u,hyd=u=>{const Aa=A(u),R_=Aa/Pm(u),V=Qv/Aa;return{V,Fr:Math.sqrt(a*Qv*Qv*T(u)/(gg*Aa**3)),Sf:Math.pow(n*V/Math.pow(R_,2/3),2),E:u+a*V*V/(2*gg)}};
+ const ND=u=>[S-hyd(u).Sf,1-a*Qv*Qv*T(u)/(gg*A(u)**3)];let hi=1,k=0;const fc=u=>a*Qv*Qv*T(u)/(gg*A(u)**3)-1;while(fc(hi)>0&&k++<60)hi*=2;const yc=bis(fc,1e-6,hi);
+ let yn=NaN;if(S>0){const fn=u=>A(u)*Math.pow(A(u)/Pm(u),2/3)*Math.sqrt(S)/n-Qv;hi=1;k=0;while(fn(hi)<0&&k++<60)hi*=2;yn=bis(fn,1e-6,hi)}
+ const F0=[{s:0,y:y1}],PP=[];let hh=y1,s=0;
+ if(h){
+  const dh=(v2-y1)/nt;
+  for(let i=0;i<nt;i++){const hm=hh+dh/2,[N,D]=ND(hm),ds=dh*D/N;if(!isFinite(ds)){W.push(`Tramo ${i+1}: N≈0 (cerca de yn), Δs indeterminado.`);break}PP.push({h:hh,hm,N,D,ds,s:s+ds});s+=ds;hh+=dh;F0.push({s,y:hh})}
+  if((y1-yc)*(v2-yc)<0&&Math.abs(v2-yc)>.002*yc)W.push(`El intervalo [y1, y2] contiene yc = ${fx(yc)} m: singularidad / resalto. Resultado no válido.`);
+  if(PP.some(p=>Math.sign(p.ds)!=Math.sign(PP[0].ds)))W.push('Δs cambia de signo: el intervalo cruza un tirante singular.');
+  if(PP.length){const up_=s<0;if((sel=='R')!=up_)W.push(sel=='R'?`Elegiste el cero en la desembocadura (derecha), pero con y₁ < y₂ (Δh > 0) el cálculo avanza hacia aguas abajo. El cero se ubicó igualmente en el extremo derecho; para calcular desde la desembocadura escribe y₁ = ${fx(v2,3)} e y₂ = ${fx(y1,3)} (Δh negativo).`:`Elegiste el cero a la izquierda (aguas arriba), pero con y₁ > y₂ (Δh < 0) el cálculo avanza hacia aguas arriba. El cero se ubicó igualmente en el extremo izquierdo; para calcular desde aguas arriba escribe y₁ = ${fx(v2,3)} e y₂ = ${fx(y1,3)}.`)}
+ }else{
+  for(let i=0;i<nt;i++){
+   const[N1,D1]=ND(hh),d1=dsv*N1/D1;
+   if(!isFinite(d1)){W.push(`Paso ${i+1}: D ≈ 0 en h = ${fx(hh,4)} m (cerca de yc). Cálculo detenido.`);break}
+   const tr=[{h:hh,N:N1,D:D1,dh:d1}];let dq=d1,ok=true;
+   for(let it=0;it<200;it++){const hm=hh+dq/2;if(!(hm>0)){ok=false;break}const[N,D]=ND(hm),dn=dsv*N/D;if(!isFinite(dn)){ok=false;break}tr.push({h:hm,N,D,dh:dn});if(Math.abs(dn-dq)<1e-10){dq=dn;break}dq=dn}
+   const hn=hh+dq;
+   if(!ok||!(hn>0)){W.push(`Paso ${i+1}: la iteración no converge (tirante ≤ 0 o D ≈ 0). Cálculo detenido.`);break}
+   if((hh-yc)*(hn-yc)<0){W.push(`Paso ${i+1}: el perfil cruza yc = ${fx(yc)} m: singularidad / resalto. Cálculo detenido.`);break}
+   PP.push({s,h:hh,tr,dh:dq,hn});s+=dsv;hh=hn;F0.push({s,y:hh});
+  }
+ }
+ const sz=sel=='R'?Math.max(...F0.map(p=>p.s)):Math.min(...F0.map(p=>p.s));
+ const FF=F0.map(p=>({...p,x:x1+dr*(p.s-sz)})),yEnd=FF[FF.length-1].y;
+ if(!h&&PP.length&&(sel=='R')!=(s<0))W.push(sel=='R'?'Elegiste el cero a la derecha (desembocadura), pero Δs &gt; 0 hace avanzar el cálculo hacia aguas abajo. El cero se ubicó igualmente en el extremo derecho; para calcular desde la desembocadura usa Δs negativo.':'Elegiste el cero a la izquierda (aguas arriba), pero Δs &lt; 0 hace avanzar el cálculo hacia aguas arriba. El cero se ubicó igualmente en el extremo izquierdo; para calcular desde aguas arriba usa Δs positivo.');
+ if(isFinite(yn)&&(y1-yn)*(yEnd-yn)<=0)W.push(`El intervalo contiene yn = ${fx(yn)} m: el perfil solo tiende asintóticamente a yn.`);
+ if(FF.length<2)W.push('No se pudo calcular ningún tramo con estos datos.');
+ const ym=(y1+yEnd)/2,lab=!isFinite(yn)?(S<0?'A':'H')+(ym>yc?'2':'3'):Math.abs(yn-yc)<=.01*yc?'C'+(ym>yc?'1':'3'):yn>yc?(ym>yn?'M1':ym>yc?'M2':'M3'):(ym>yc?'S1':ym>yn?'S2':'S3');
+ document.querySelectorAll('#'+sec+' .at tr').forEach(r=>r.classList.remove('hl'));const row=$(P+'_a_'+(lab[0]=='M'||lab[0]=='S'?lab:lab[0]));if(row)row.classList.add('hl');
+ $(msg).innerHTML=W.map(m=>`<div class=wr>⚠ ${m}</div>`).join('');
+ const cls=isFinite(yn)?(Math.abs(yn-yc)<=.01*yc?'Crítica (C)':yn>yc?'Suave (M)':'Fuerte (S)'):(S<0?'Adversa (A)':'Horizontal (H)');
+ $(P+'card').innerHTML=[['Tipo de perfil',lab],['hu (altura uniforme)',fx(yn,4)+' m'],['hc (altura crítica)',fx(yc,4)+' m'],[h?'Δh (paso)':'Δs (paso)',h?fx((v2-y1)/nt,5)+' m':fx(dsv,3)+' m'],['Tipo de pendiente',cls],['Distancia total',fx(Math.abs(s),3)+' m']].map((r,i)=>`<div style="border-top:3px solid ${['#7a5bb5','#1c9a5c','#d33a1f','#0b57c4','#8a5a2b','#8a5a2b'][i]}">${r[0]}<b>${r[1]}</b></div>`).join('');
+ R[P]={F:FF,S,yn,yc,lab,dr,x1,sz};const th=l=>'<tr>'+l.map(c=>`<th>${c}</th>`).join('')+'</tr>';
+ $(P+'f').innerHTML=th(['x (m)','y (m)','Cota lámina','V (m/s)','Fr','E (m)'])+FF.map(p=>{const q=hyd(p.y);return`<tr><td>${fx(p.x,3)}</td><td>${fx(p.y,4)}</td><td>${fx(p.y-S*p.s,3)}</td><td>${fx(q.V,3)}</td><td>${fx(q.Fr,3)}</td><td>${fx(q.E,3)}</td></tr>`}).join('');
+ if(h){let rows='';const xq=q=>fx(x1+dr*(q-sz),3),nd=(y,xv)=>`<tr style="background:#f4f9fe;font-weight:600"><td>${y}</td><td></td><td></td><td></td><td></td><td>${xv}</td></tr>`;
+  PP.forEach((p,i)=>{rows+=nd(fx(p.h,4),xq(i?PP[i-1].s:0))+`<tr><td></td><td>${fx(p.hm,4)}</td><td>${p.N.toFixed(5)}</td><td>${p.D.toFixed(4)}</td><td>${fx(p.ds,3)}</td><td></td></tr>`});
+  const L_=FF[FF.length-1];rows+=nd(fx(L_.y,4),xq(L_.s));
+  $(P+'p').innerHTML=th(['h (m)','h + Δh/2','N(h+Δh/2)','D(h+Δh/2)','Δs (m)','x (m)'])+rows}
+ else $(P+'p').innerHTML=th(['x (m)','h₁','N(h₁)','D(h₁)','Δh₁','h₂ = h₁+Δh₁/2','N(h₂)','D(h₂)','Δh₂','h₃ = h₁+Δh₂/2','N(h₃)','D(h₃)','Δh₃','Δh (converg.)','h siguiente'])+PP.map(p=>{const q=i=>p.tr[Math.min(i,p.tr.length-1)],a1=q(0),a2=q(1),a3=q(2);return`<tr><td>${fx(x1+dr*(p.s-sz),3)}</td><td>${fx(p.h,4)}</td><td>${a1.N.toFixed(5)}</td><td>${a1.D.toFixed(4)}</td><td>${fx(a1.dh,4)}</td><td>${fx(a2.h,4)}</td><td>${a2.N.toFixed(5)}</td><td>${a2.D.toFixed(4)}</td><td>${fx(a2.dh,4)}</td><td>${fx(a3.h,4)}</td><td>${a3.N.toFixed(5)}</td><td>${a3.D.toFixed(4)}</td><td>${fx(a3.dh,4)}</td><td>${fx(p.dh,5)}</td><td>${fx(p.hn,4)}</td></tr>`}).join('');
+ const f0=FF[0],f1=FF[FF.length-1];$(P+'sum').innerHTML=[['Punto inicial',`y = ${fx(f0.y,4)} m · x = ${fx(f0.x,3)} m`],['Punto final',`y = ${fx(f1.y,4)} m · x = ${fx(f1.x,3)} m`],['Distancia calculada',`${fx(Math.abs(s),3)} m`]].map((r,i)=>`<div style="border-top:3px solid ${['#1c9a5c','#d33a1f','#8a5a2b'][i]}">${r[0]}<b style="font-size:15px">${r[1]}</b></div>`).join('');
+ plot(P);if(t)toast(W.length)}
+function plot(P){const r=R[P];if(!r||$(P=='k'?'m2':'m3').hidden)return;
+ const c=$(P+'c'),x=c.getContext('2d'),dp=devicePixelRatio||1,w=c.clientWidth,H=c.clientHeight;c.width=w*dp;c.height=H*dp;x.setTransform(dp,0,0,dp,0,0);
+ const st=$(P+'g').value,pts=r.F,dr=r.dr,xs=pts.map(p=>p.x),xa=Math.min(...xs),xb=Math.max(...xs),rg=(xb-xa)||1,pd=rg*.07;
+ let X0=xa-pd,X1=xb+pd;if(st=='d'){if(dr==1)X1=xb+rg*.25;else X0=xa-rg*.25}
+ const zb=u=>-r.S*(u-r.x1+r.sz);let up=pts[0],dn=pts[0];pts.forEach(p=>{if(p.s<up.s)up=p;if(p.s>dn.s)dn=p});
+ const top=Math.max(...pts.map(p=>p.y),r.yn||0,r.yc)*1.2,es=[zb(X0),zb(X1),...pts.map(p=>zb(p.x)+p.y),zb(X0)+r.yc,zb(X1)+r.yc];
+ if(isFinite(r.yn))es.push(zb(X0)+r.yn,zb(X1)+r.yn);if(st=='g')es.push(zb(up.x)+top);
+ const lo=Math.min(...es),hi=Math.max(...es),pe_=(hi-lo)*.1||1,e0=lo-pe_,e1=hi+pe_,m={l:50,r:10,t:10,b:26},pw=w-m.l-m.r,ph=H-m.t-m.b,PX=u=>m.l+(u-X0)/(X1-X0)*pw,PY=e=>m.t+ph-(e-e0)/(e1-e0)*ph;
+ x.font='11px system-ui';x.fillStyle='#14202b';x.strokeStyle='#e1e8f0';x.lineWidth=1;const ta=tk(X0,X1,7),tb=tk(e0,e1,5);
+ ta.t.forEach(q=>{x.beginPath();x.moveTo(PX(q),m.t);x.lineTo(PX(q),m.t+ph);x.stroke();x.fillText(q.toFixed(ta.d),PX(q)-12,H-9)});tb.t.forEach(q=>{x.beginPath();x.moveTo(m.l,PY(q));x.lineTo(m.l+pw,PY(q));x.stroke();x.fillText(q.toFixed(tb.d),2,PY(q)+4)});
+ const ln=(pp,col,wd,d)=>{x.beginPath();x.strokeStyle=col;x.lineWidth=wd;x.setLineDash(d||[]);pp.forEach((p,i)=>i?x.lineTo(PX(p[0]),PY(p[1])):x.moveTo(PX(p[0]),PY(p[1])));x.stroke();x.setLineDash([])};
+ /* presa / desembocadura: cuerpo de agua aguas abajo del último punto */
+ if(st=='d'){const xe=dr==1?X1:X0,Lp=zb(dn.x)+dn.y;
+  x.fillStyle='rgba(31,111,224,.22)';x.beginPath();x.moveTo(PX(dn.x),PY(Lp));x.lineTo(PX(xe),PY(Lp));x.lineTo(PX(xe),PY(zb(xe)));x.lineTo(PX(dn.x),PY(zb(dn.x)));x.closePath();x.fill();
+  ln([[dn.x,Lp],[xe,Lp]],'#1f6fe0',3);ln([[dn.x,zb(dn.x)],[dn.x,Lp]],'#1f6fe0',1.5,[4,3]);
+  x.font='bold 12px system-ui';x.fillStyle='#1450a8';const tx='Presa / desembocadura · y = '+fx(dn.y,3)+' m',tw=x.measureText(tx).width,mid=(PX(dn.x)+PX(xe))/2;x.fillText(tx,Math.max(m.l+2,Math.min(m.l+pw-tw-2,mid-tw/2)),PY(Lp)-8);
+  x.font='16px system-ui';x.fillText('≈  ≈  ≈',Math.max(m.l+2,Math.min(m.l+pw-60,mid-24)),PY(Lp)+20)}
+ ln([[X0,zb(X0)],[X1,zb(X1)]],'#8a5a2b',4);if(isFinite(r.yn))ln([[X0,zb(X0)+r.yn],[X1,zb(X1)+r.yn]],'#1c9a5c',1.6,[7,4]);ln([[X0,zb(X0)+r.yc],[X1,zb(X1)+r.yc]],'#d33a1f',1.6,[4,4]);
+ ln(pts.map(p=>[p.x,zb(p.x)+p.y]),'#1f6fe0',2.5);x.fillStyle='#1f6fe0';pts.forEach(p=>x.fillRect(PX(p.x)-3,PY(zb(p.x)+p.y)-3,6,6));
+ /* compuerta: extremo aguas arriba, abertura = tirante en ese punto */
+ if(st=='g'){const gx=PX(up.x),yt=PY(zb(up.x)+top),yb=PY(zb(up.x)+up.y);x.fillStyle='#14202b';x.fillRect(gx-3,yt,6,yb-yt);
+  ln([[up.x,zb(up.x)],[up.x,zb(up.x)+up.y]],'#e58a20',1.8,[3,3]);
+  x.font='bold 12px system-ui';const tx='Compuerta · abertura a = '+fx(up.y,3)+' m',tw=x.measureText(tx).width;x.fillStyle='#14202b';x.fillText(tx,gx+10+tw>w?gx-10-tw:gx+10,yt+14)}
+ x.font='bold 12px system-ui';const left=st=='d'&&dr==1,tl=(q,col,yv)=>{x.fillStyle=col;x.fillText(q,left?PX(X0)+4:PX(X1)-4-x.measureText(q).width,PY(yv)-5)};
+ if(isFinite(r.yn))tl('hu = '+fx(r.yn,3)+' m','#1c9a5c',zb(left?X0:X1)+r.yn);tl('hc = '+fx(r.yc,3)+' m','#d33a1f',zb(left?X0:X1)+r.yc);
+ x.fillStyle='#172536';x.fillText('Perfil '+r.lab,m.l+8,m.t+14);x.fillText('Flujo →',m.l+pw/2-24,m.t+14);x.font='11px system-ui';x.fillText('x (m)',m.l+pw-34,H-1);
+ c.dataset.g=JSON.stringify([X0,X1,m.l,pw])}
+['k','p'].forEach(P=>{
+ $(P+'go').onclick=()=>calc(P,1);$(P+'g').onchange=()=>plot(P);$(P+'d').onchange=$(P+'x').onchange=()=>{if(R[P])calc(P,0)};
+ $(P+'c').onpointermove=e=>{const r=R[P];if(!r||!$(P+'c').dataset.g)return;const[X0,X1,l,pw]=JSON.parse($(P+'c').dataset.g),rc=$(P+'c').getBoundingClientRect(),wx=X0+(e.clientX-rc.left-l)/pw*(X1-X0);let b=r.F[0];r.F.forEach(p=>{if(Math.abs(p.x-wx)<Math.abs(b.x-wx))b=p});$(P+'tp').textContent=`x = ${fx(b.x,2)} m · y = ${fx(b.y,4)} m · cota lámina = ${fx(b.y-r.S*b.s,3)} m`}});
+let tt;function toast(w){const e=$('toast');e.innerHTML='<span class="ck">✓</span><span>Cálculos realizados exitosamente'+(w?' · revise las advertencias':'')+'</span>';e.hidden=false;e.style.animation='none';void e.offsetWidth;e.style.animation='';clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,3200)}
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('tabs').children].forEach(c=>c.classList.toggle('on',c==b));['m1','m2','m3'].forEach(i=>$(i).hidden=b.dataset.t!=i);m1();plot('k');plot('p')};
+addEventListener('resize',()=>{pe();plot('k');plot('p')});gd();m1();calc('k');calc('p');
 </script></body></html>
